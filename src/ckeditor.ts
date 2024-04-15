@@ -6,7 +6,6 @@
 import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic';
 
 import { Alignment } from '@ckeditor/ckeditor5-alignment';
-import { Autoformat } from '@ckeditor/ckeditor5-autoformat';
 import { Bold, Code, Italic, Strikethrough, Underline } from '@ckeditor/ckeditor5-basic-styles';
 import { BlockQuote } from '@ckeditor/ckeditor5-block-quote';
 import { CodeBlock } from '@ckeditor/ckeditor5-code-block';
@@ -18,22 +17,22 @@ import { Heading } from '@ckeditor/ckeditor5-heading';
 import { Highlight } from '@ckeditor/ckeditor5-highlight';
 import { HorizontalLine } from '@ckeditor/ckeditor5-horizontal-line';
 import { HtmlEmbed } from '@ckeditor/ckeditor5-html-embed';
-import { GeneralHtmlSupport, HtmlComment } from '@ckeditor/ckeditor5-html-support';
 import {
-	Image,
-	ImageCaption,
-	ImageResize,
-	ImageStyle,
-	ImageToolbar
-} from '@ckeditor/ckeditor5-image';
+	DataFilter,
+	DataSchema,
+	FullPage,
+	GeneralHtmlSupport,
+	HtmlComment
+} from '@ckeditor/ckeditor5-html-support';
+import { Image, ImageInsert, ImageStyle, ImageUpload } from '@ckeditor/ckeditor5-image';
 import { Indent, IndentBlock } from '@ckeditor/ckeditor5-indent';
-import { AutoLink, Link, LinkImage } from '@ckeditor/ckeditor5-link';
+import { Link, LinkImage } from '@ckeditor/ckeditor5-link';
 import { List, ListProperties } from '@ckeditor/ckeditor5-list';
-import { Markdown } from '@ckeditor/ckeditor5-markdown-gfm';
 import { MediaEmbed, MediaEmbedToolbar } from '@ckeditor/ckeditor5-media-embed';
 import { PageBreak } from '@ckeditor/ckeditor5-page-break';
 import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
 import { RemoveFormat } from '@ckeditor/ckeditor5-remove-format';
+import { StandardEditingMode } from '@ckeditor/ckeditor5-restricted-editing';
 import { SelectAll } from '@ckeditor/ckeditor5-select-all';
 import { ShowBlocks } from '@ckeditor/ckeditor5-show-blocks';
 import { SourceEditing } from '@ckeditor/ckeditor5-source-editing';
@@ -47,7 +46,14 @@ import {
 	SpecialCharactersText
 } from '@ckeditor/ckeditor5-special-characters';
 import { Style } from '@ckeditor/ckeditor5-style';
-import { Table, TableColumnResize } from '@ckeditor/ckeditor5-table';
+import {
+	Table,
+	TableCaption,
+	TableColumnResize,
+	TableProperties,
+	TableToolbar
+} from '@ckeditor/ckeditor5-table';
+import { TextTransformation } from '@ckeditor/ckeditor5-typing';
 import { Undo } from '@ckeditor/ckeditor5-undo';
 import { Base64UploadAdapter } from '@ckeditor/ckeditor5-upload';
 import { WordCount } from '@ckeditor/ckeditor5-word-count';
@@ -58,19 +64,20 @@ import { WordCount } from '@ckeditor/ckeditor5-word-count';
 class Editor extends ClassicEditor {
 	public static override builtinPlugins = [
 		Alignment,
-		AutoLink,
-		Autoformat,
 		Base64UploadAdapter,
 		BlockQuote,
 		Bold,
 		Code,
 		CodeBlock,
+		DataFilter,
+		DataSchema,
 		Essentials,
 		FindAndReplace,
 		FontBackgroundColor,
 		FontColor,
 		FontFamily,
 		FontSize,
+		FullPage,
 		GeneralHtmlSupport,
 		Heading,
 		Highlight,
@@ -78,10 +85,9 @@ class Editor extends ClassicEditor {
 		HtmlComment,
 		HtmlEmbed,
 		Image,
-		ImageCaption,
-		ImageResize,
+		ImageInsert,
 		ImageStyle,
-		ImageToolbar,
+		ImageUpload,
 		Indent,
 		IndentBlock,
 		Italic,
@@ -89,7 +95,6 @@ class Editor extends ClassicEditor {
 		LinkImage,
 		List,
 		ListProperties,
-		Markdown,
 		MediaEmbed,
 		MediaEmbedToolbar,
 		PageBreak,
@@ -105,10 +110,15 @@ class Editor extends ClassicEditor {
 		SpecialCharactersLatin,
 		SpecialCharactersMathematical,
 		SpecialCharactersText,
+		StandardEditingMode,
 		Strikethrough,
 		Style,
 		Table,
+		TableCaption,
 		TableColumnResize,
+		TableProperties,
+		TableToolbar,
+		TextTransformation,
 		Underline,
 		Undo,
 		WordCount
@@ -124,8 +134,6 @@ class Editor extends ClassicEditor {
 				'redo',
 				'removeFormat',
 				'|',
-				'heading',
-				'|',
 				'specialCharacters',
 				'bulletedList',
 				'numberedList',
@@ -140,9 +148,14 @@ class Editor extends ClassicEditor {
 				'blockQuote',
 				'insertTable',
 				'mediaEmbed',
+				'imageUpload',
+				'imageInsert',
 				'|',
 				'sourceEditing',
 				'-',
+				'heading',
+				'style',
+				'|',
 				'indent',
 				'outdent',
 				'alignment',
@@ -156,21 +169,17 @@ class Editor extends ClassicEditor {
 				'bold',
 				'italic',
 				'underline',
-				'strikethrough',
-				'|',
-				'style'
+				'strikethrough'
 			],
 			shouldNotGroupWhenFull: true
 		},
 		language: 'en',
-		image: {
-			toolbar: [
-				'imageTextAlternative',
-				'toggleImageCaption',
-				'imageStyle:inline',
-				'imageStyle:block',
-				'imageStyle:side',
-				'linkImage'
+		table: {
+			contentToolbar: [
+				'tableColumn',
+				'tableRow',
+				'mergeTableCells',
+				'tableProperties'
 			]
 		}
 	};
